@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -19,8 +19,9 @@ class Villain(db.Model):
     return "<Villain " + self.name + ">"
 
 
-db.create_all()
-db.session.commit()
+with app.app_context():
+  db.create_all()
+  db.session.commit()
 
 
 #### Serving Static Files
@@ -43,7 +44,7 @@ def delete():
 
 
 #ADD CODE: add /api/villains route here
-@app.route("/api/villains", methods=["GET"])
+@app.route("/api/villains/", methods=["GET"])
 def get_villains():
   villains = Villain.query.all()
   data = []
@@ -85,7 +86,7 @@ def add_villain():
   if errors:
     return jsonify({"errors": errors})
   else:
-    new_villain = Villain(name=name,
+    new_villain = Villain(name=name, 
                           description=description,
                           interests=interests,
                           url=url)
